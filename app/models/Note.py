@@ -1,27 +1,25 @@
-""" 
-    Sample Model File
 
-    A Model should be in charge of communicating with the Database. 
-    Define specific model method that query the database for information.
-    Then call upon these model method in your controller.
-
-    Create a model using this template.
-"""
 from system.core.model import Model
 
-class WelcomeModel(Model):
+class Note(Model):
     def __init__(self):
-        super(WelcomeModel, self).__init__()
-    """
-    Below is an example of a model method that queries the database for all users in a fictitious application
+        super(Note, self).__init__()
 
-    def get_all_users(self):
-        print self.db.query_db("SELECT * FROM users")
+    def get_all_notes(self):
+        return self.db.query_db("SELECT * FROM notes")
 
-    Every model has access to the "self.db.query_db" method which allows you to interact with the database
-    """
+    def add_new_title(self, info):
+        query = "INSERT INTO notes (title, created_at) VALUES (%s, NOW())"
+        data = [info['title']]
+        return self.db.query_db(query, data)
 
-    """
-    If you have enabled the ORM you have access to typical ORM style methods.
-    See the SQLAlchemy Documentation for more information on what types of commands you can run.
-    """
+    def add_new_description(self, info):
+        query = "UPDATE notes SET notes.description = %s, notes.updated_at = NOW() WHERE notes.id = %s"
+        data = [info['description'], info['id']]
+        print data
+        return self.db.query_db(query, data)
+
+    def delete_note(self, info):
+        query = "DELETE FROM notes WHERE notes.id = %s"
+        data = [info]
+        return self.db.query_db(query, data)

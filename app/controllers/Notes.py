@@ -1,27 +1,39 @@
-"""
-    Sample Controller File
 
-    A Controller should be in charge of responding to a request.
-    Load models to interact with the database and load views to render them to the client.
-
-    Create a controller using this template
-"""
 from system.core.controller import *
 
-class Welcome(Controller):
+class Notes(Controller):
     def __init__(self, action):
-        super(Welcome, self).__init__(action)
-        """
-            This is an example of loading a model.
-            Every controller has access to the load_model method.
+        super(Notes, self).__init__(action)
 
-            self.load_model('WelcomeModel')
-        """
+        self.load_model('Note')
 
-    """ This is an example of a controller method that will load a view for the client """
+
+
     def index(self):
-        """ 
-        A loaded model is accessible through the models attribute 
-        self.models['WelcomeModel'].get_all_users()
-        """
-        return self.load_view('index.html')
+        notes = self.models['Note'].get_all_notes()
+        return self.load_view('index.html', notes=notes)
+
+    def partialindex(self):
+        notes = self.models['Note'].get_all_notes()
+        return self.load_view('partialindex.html', notes=notes)
+
+    def add(self):
+        titler = {
+        "title": request.form['title']
+        }
+        self.models['Note'].add_new_title(titler)
+        notes = self.models['Note'].get_all_notes()
+        return self.load_view('partialindex.html', notes=notes)
+
+    def description(self):
+        desc = {
+        "description": request.form['description'],
+        "id": request.form['hidden']
+        }
+        print "desc"
+        self.models['Note'].add_new_description(desc)
+        return redirect('/')
+
+    def delete(self, id):
+        self.models['Note'].delete_note(id)
+        return redirect('/')
